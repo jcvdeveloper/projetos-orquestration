@@ -46,10 +46,33 @@ pnpm build       # production build
 pnpm verify      # lint + typecheck + test + build, same as CI
 ```
 
+## Landing page
+
+Live at **https://jcvdeveloper.github.io/projetos-orquestration/** — a single page
+(`apps/web/src/app/page.tsx`) covering what the company does and how to get in touch.
+Hosted on GitHub Pages as a v1 stopgap; redeploy after changes with:
+
+```bash
+./scripts/deploy-web-to-gh-pages.sh
+```
+
+This builds a static export (`pnpm --filter web build:pages`, which sets
+`GITHUB_PAGES=true` so `next.config.ts` adds the `/projetos-orquestration` base
+path) and pushes it to the `gh-pages` branch, which GitHub Pages serves from.
+Move to Vercel (the default per `docs/decisions/0001-tech-stack.md`) once a
+Vercel account/token is set up — flagged to the CEO as a decision, not done here.
+
 ## CI
 
 `.github/workflows/ci.yml` runs lint, typecheck, test, and build on every push to
 `main` and every pull request. A PR that fails any of these should not be merged.
+
+**Known limitation:** the CI workflow currently lives at
+`.github/workflows-pending-scope/ci.yml`, not `.github/workflows/ci.yml`, because
+the `gh` token used to push from this environment only has `repo`/`gist`/`read:org`
+scopes, not `workflow` — GitHub rejects pushes that touch `.github/workflows/*`
+without it. Once a maintainer pushes with a token that has the `workflow` scope
+(or via the GitHub web UI), move the file back; no content changes needed.
 
 ## Adding a new app
 
